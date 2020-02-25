@@ -3,7 +3,6 @@ import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { withFirebase } from '../firebase/index';
 import * as ROUTES from '../constants/routes';
-// import * as ROLES from '../constants/roles';
 
 const SignUpPage = () => (
   <div>
@@ -16,7 +15,6 @@ const INITIAL_STATE = {
     username: '',
     email: '',
     id: '',
-    // isAdmin: false,
     passwordOne: '',
     passwordTwo: '',
 }
@@ -32,10 +30,6 @@ const SignUpFormBase = ({ firebase, ...props }) => {
       READER: '',
       EDITOR: '',
     };
-
-    // if (isAdmin) {
-    //   roles[ROLES.ADMIN] = ROLES.ADMIN;
-    // }
 
     firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
@@ -71,20 +65,11 @@ const SignUpFormBase = ({ firebase, ...props }) => {
         }))
   };
 
-  // const onChangeCheckbox = event => {
-  //   event.persist()
-  //       setValues(prevValues => ({
-  //           ...prevValues,
-  //           [event.target.name] : event.target.checked
-  //       }))
-  // };
-
   const {
     username,
     email,
     passwordOne,
     passwordTwo,
-    // isAdmin,
   } = values;
 
 const isInvalid =
@@ -123,15 +108,6 @@ const isInvalid =
               type="password"
               placeholder="Confirmez votre mot de passe"
           />
-          {/* <label>
-            Admin:
-            <input
-              name="isAdmin"
-              type="checkbox"
-              checked={isAdmin}
-              onChange={e => onChangeCheckbox(e)}
-            />
-          </label> */}
           <button disabled={isInvalid} type="submit">S'enregistrer</button>
           {error && <p>{error.message}</p>}
       </form>

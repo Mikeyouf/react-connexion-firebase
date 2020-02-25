@@ -63,21 +63,11 @@ const UserListBase = ({ firebase, ...props }) => {
   );
 }
 
-// const INITIAL_CHECK = {
-//   ADMIN: '',
-//   READER: '',
-//   EDITOR: ''
-// }
-
 const UserItemBase = ({ firebase, ...props }) => {
   const [ loading, setLoading ] = useState(false)
   const [ user, setUser ] = useState(null)
   const [ authUser, setAuthUser ] = useState('')
   const match = props.match.params.id
-  // const [ isChecked, setIsChecked ] = useState({})
-  // const [ isAdmin, setIsAdmin ] = useState('')
-  // const [ isReader, setIsReader ] = useState('')
-  // console.log(isAdmin)
   
   useEffect(() => {
     if (user) {
@@ -89,14 +79,7 @@ const UserItemBase = ({ firebase, ...props }) => {
       .get()
       .then(snapshot => {
         setUser(snapshot.data())
-        // console.log(snapshot.data());
-        
         setAuthUser(snapshot.data().username)
-        // setIsChecked({
-        //   ADMIN: snapshot.data().roles.ADMIN || '',
-        //   READER: snapshot.data().roles.READER || '',
-        //   EDITOR: snapshot.data().roles.EDITOR || ''
-        // })
         setLoading(false)
       })
 
@@ -115,7 +98,6 @@ const UserItemBase = ({ firebase, ...props }) => {
   };
 
   const onChangeCheckbox = async (event, role) => {
-    // const userRef = firebase.db.collection('users').doc(match)
     
     if(event.target.checked) {
       const values = user.roles
@@ -124,14 +106,12 @@ const UserItemBase = ({ firebase, ...props }) => {
         ...prevValues,
         roles : roles
       }))
-      // await userRef.update({ ...user })
     } else {
       const values = user.roles
       const roles = { ...values, [event.target.name] : '' }
       await setUser({
         roles: roles
       })
-      // userRef.update({ ...user })
     }
   };
 

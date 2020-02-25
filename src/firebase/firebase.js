@@ -28,7 +28,7 @@ class Firebase {
     doSendEmailVerification = () =>
     // console.log(process.env.REACT_APP_CONFIRMATION_EMAIL_REDIRECT)
       this.auth.currentUser.sendEmailVerification({
-        url: 'http://localhost:3000/',
+        url: 'https://react-firebase-connexion.netlify.com',
     });
 
     // *** Merge Auth and DB User API *** //

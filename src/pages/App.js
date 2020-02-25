@@ -18,6 +18,7 @@ import { withAuthentication } from '../components/session/index';
 const App = () => (
   <Router>
     <div>
+    {/* {console.log(process.env.REACT_APP_CONFIRMATION_EMAIL_REDIRECT)} */}
       <Navigation />
       <hr />
       <Route exact path={ROUTES.LANDING} component={LandingPage} />

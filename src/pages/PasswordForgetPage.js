@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { withFirebase } from '../firebase/index';
 import * as ROUTES from '../constants/routes';
@@ -12,41 +12,40 @@ const PasswordForgetPage = () => (
 
 const INITIAL_STATE = {
   email: '',
-  error: null,
 };
 
-class PasswordForgetFormBase extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
+const PasswordForgetFormBase = ({ firebase }) => {
+  const [email, setEmail] = useState(INITIAL_STATE)
+  const [error, setError] = useState(null)
 
-  onSubmit = event => {
-    const { email } = this.state;
-    this.props.firebase
+  const onSubmit = event => {
+    firebase
       .doPasswordReset(email)
       .then(() => {
-        this.setState({ ...INITIAL_STATE });
+        setEmail(INITIAL_STATE)
       })
       .catch(error => {
-        this.setState({ error });
+        setError(error);
       });
     event.preventDefault();
   };
 
-  onChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
+  const onChange = event => {
+    event.persist()
+        setEmail(prevValues => ({
+            ...prevValues,
+            [event.target.name] : event.target.value
+        }))
   };
 
-  render() {
-    const { email, error } = this.state;
-    const isInvalid = email === '';
+  const isInvalid = email === '';
+
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={e => onSubmit(e)}>
         <input
           name="email"
-          value={this.state.email}
-          onChange={this.onChange}
+          value={email.email}
+          onChange={e => onChange(e)}
           type="text"
           placeholder="Votre addresse email"
         />
@@ -56,8 +55,8 @@ class PasswordForgetFormBase extends Component {
         {error && <p>{error.message}</p>}
       </form>
     );
-  }
 }
+
 const PasswordForgetLink = () => (
   <p>
     <Link to={ROUTES.PASSWORD_FORGET}>Mot de passe oublié ?</Link>

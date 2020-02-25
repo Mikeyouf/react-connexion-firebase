@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { SignUpLink } from './SignUpPage';
@@ -14,50 +14,52 @@ const SignInPage = () => (
     <SignUpLink />
   </div>
 );
+
 const INITIAL_STATE = {
   email: '',
   password: '',
-  error: null,
 };
-class SignInFormBase extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-  }
-  onSubmit = event => {
-    const { email, password } = this.state;
-    this.props.firebase
-      .doSignInWithEmailAndPassword(email, password)
+
+const SignInFormBase = ({ firebase, ...props }) => {
+  const [ values, setValues ] = useState(INITIAL_STATE)
+  const [ error, setError ] = useState(null)
+
+  const onSubmit = event => {
+    firebase
+      .doSignInWithEmailAndPassword(values.email, values.password)
       .then(() => {
-        this.setState({ ...INITIAL_STATE });
-        this.props.history.push(ROUTES.HOME);
+        setValues(INITIAL_STATE)
+        props.history.push(ROUTES.HOME);
       })
       .catch(error => {
-        this.setState({ error });
+        setError(error)
       });
     event.preventDefault();
-  };
+  }
 
-  onChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
+  const onChange = event => {
+    event.persist()
+        setValues(prevValues => ({
+            ...prevValues,
+            [event.target.name] : event.target.value
+        }))
+  }
 
-  render() {
-    const { email, password, error } = this.state;
-    const isInvalid = password === '' || email === '';
+  const isInvalid = values.password === '' || values.email === '';
+
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={e => onSubmit(e)}>
         <input
           name="email"
-          value={email}
-          onChange={this.onChange}
+          value={values.email}
+          onChange={e => onChange(e)}
           type="text"
           placeholder="Votre addresse email"
         />
         <input
           name="password"
-          value={password}
-          onChange={this.onChange}
+          value={values.password}
+          onChange={e => onChange(e)}
           type="password"
           placeholder="Mot de passe"
         />
@@ -67,8 +69,8 @@ class SignInFormBase extends Component {
         {error && <p>{error.message}</p>}
       </form>
     );
-  }
 }
+
 const SignInForm = compose(
   withRouter,
   withFirebase,
